@@ -4,9 +4,8 @@ import MyGoogleMaps from './components/MyGoogleMaps';
 import { Provider } from "react-redux"
 import { createStore } from "redux"
 import allReducers from "./reducer"
-
+let store = createStore(allReducers)
 function App() {
-  const store = createStore(allReducers)
   return (
     <Provider store={store}>
       <div className="main-wrapper">

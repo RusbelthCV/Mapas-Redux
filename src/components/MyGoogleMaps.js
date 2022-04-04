@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment  } from 'react';
 
 import GoogleMapReact from 'google-map-react';
 
@@ -8,6 +8,7 @@ import AutoComplete from './Autocomplete';
 import Marker from './Marker';
 import credentials from './credentials';
 import { connect } from "react-redux"
+import {addMarker} from '../actions/markerAction'
 
 const Wrapper = styled.main`
   width: 100%;
@@ -15,23 +16,23 @@ const Wrapper = styled.main`
 `;
 
 class MyGoogleMap extends Component {
-
-
-    state = {
-        mapApiLoaded: false,
-        mapInstance: null,
-        mapApi: null,
-        geoCoder: null,
-        places: [],
-        center: [],
-        zoom: 9,
-        address: '',
-        draggable: true,
-        lat: null,
-        lng: null,
-        marks: []
-    };
-
+    constructor(props) {
+        super(props);
+        this.state = {
+            mapApiLoaded: false,
+            mapInstance: null,
+            mapApi: null,
+            geoCoder: null,
+            places: [],
+            center: [],
+            zoom: 9,
+            address: '',
+            draggable: true,
+            lat: null,
+            lng: null,
+            //marks: []
+        };
+    }
     componentWillMount() {
         this.setCurrentLocation();
     }
@@ -75,12 +76,13 @@ class MyGoogleMap extends Component {
      };
 
     addPlace = (place) => {
-        console.log(place.formatted_address);
+        const marker = {lat: place.geometry.location.lat(), lng: place.geometry.location.lng(), text: place.formatted_address}
+        this.props.addMarker(marker)
         this.setState({
             places: [place],
             lat: place.geometry.location.lat(),
             lng: place.geometry.location.lng(),
-            marks: [...this.state.marks, {lat: place.geometry.location.lat(), lng: place.geometry.location.lng(), text: place.formatted_address}]
+            //marks: [...this.state.marks, {lat: place.geometry.location.lat(), lng: place.geometry.location.lng(), text: place.formatted_address}]
         });
         this._generateAddress()
     };
@@ -125,7 +127,8 @@ class MyGoogleMap extends Component {
         const {
             places, mapApiLoaded, mapInstance, mapApi,
         } = this.state;
-        const { marks } = this.state.marks;
+        console.log("AAAAAAAAAA",this.props)
+        const { marks } = this.props.marks;
 
         return (
             <Wrapper>
@@ -151,14 +154,15 @@ class MyGoogleMap extends Component {
                     yesIWantToUseGoogleMapApiInternals
                     onGoogleApiLoaded={({ map, maps }) => this.apiHasLoaded(map, maps)}
                 >
-                    {this.state.marks.map((mark, index) =>
+                    {marks.map((mark, index) =>
                     {
                         return(
-                            console.log(mark.lng),
-                            <Marker key = {index}
-                                    text={mark.text}
-                                    lat={mark.lat}
-                                    lng={mark.lng}/>
+                            // <Fragment key={index}>
+                                <Marker key = {index}
+                                        text={mark.text}
+                                        lat={mark.lat}
+                                        lng={mark.lng}/>
+                            // </Fragment>
                         )
                     })}
 
@@ -177,5 +181,5 @@ class MyGoogleMap extends Component {
 const mapStateToProps = state => ({
     marks: state.marks,
   })
-export default MyGoogleMap;
-//export default connect(mapStateToProps, addMarker)(MyGoogleMap)
+//export default MyGoogleMap;
+export default connect(mapStateToProps, {addMarker})(MyGoogleMap)
