@@ -1,0 +1,13 @@
+Ejercicio 1:
+
+Un posible caso a futuro creo que podría ser que se quisiera quitar y poner contenidos en premium. El código no contempla esta posibilidad.
+Otra posibilidad a esta solución, que no contemplo yo es poner el additionalFee a 0. Cosa que no veo limpia ni buena de implementar, ya que entramos en un condicional,
+que realmente no queremos entrar en dicho caso
+
+Para este caso, podríamos tener un booleano en el que vemos si está activo o no el contenido en premium. 
+
+EJ: 
+
+if (typeof multimediaContent == PremiumContent && multimediaContent.isActive){
+	total += multimediaContent.additionalFee;
+}
